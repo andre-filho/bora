@@ -15,6 +15,18 @@ def md_tables_to_array(line, output_file):
     return line
 
 
+def add_md_checkbox(item):
+    return str('- [ ] ' + item + '\n')
+
+
+def format_description(description):
+    return str('**Issue description:**\n' + description)
+
+
+def add_prefix_to_title(title, number, prefix='US', subid=''):
+    return str(prefix + subid + str(number) + title)
+
+
 def get_all_lines(file):
     line = file.readline()
     file2 = open('xxx.txt', 'w+')
