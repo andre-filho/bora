@@ -45,26 +45,28 @@ def get_all_lines(file):
 def create_issue_github(title, description, acceptance_criteria, repo_name, owner):
     github = "/repos/%s/%s" % owner, repo_name
     endpoint = GITHUB_BASE_URL + github
-    
+
     issue = {'title': title, 'body': description + '\n' + acceptance_criteria}
     issue = json.dumps(issue)
 
     return make_api_call(issue, endpoint)
 
 
-def create_issue_gitlab(title, description, acceptance_criteria, repo_id):
+def create_issue_gitlab(title, description, acceptance_criteria, repo_id, private_token):
     gitlab = "/projects/%i/issues" % repo_id
     endpoint = GITLAB_BASE_URL + gitlab
-    
+
     issue = {'title': title, 'body': description + '\n' + acceptance_criteria}
     issue = json.dumps(issue)
 
-    return make_api_call(issue, endpoint)
-    
+    return make_api_call(issue, endpoint, private_token=private_token)
 
 
-def make_api_call(json, url):
-    a = req.post(url, json=json)
+def make_api_call(json, url, private_token=None):
+    if private_token is not None:
+        a = req.post(url, json=json, headers={'PRIVATE-TOKEN': private_token})
+    else:
+        a = req.post(url, json=json)
     return a.status_code
 
 
