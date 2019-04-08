@@ -1,5 +1,5 @@
 import re
-import requests as req
+import requests
 import json
 
 
@@ -13,16 +13,20 @@ def remove_md_titles(line, file):
     return line
 
 
-def md_tables_to_array(line, output_file):
-    line = re.sub('(\|\ {1,3}|\ {1,3}\||)', '', line)
-    line = str(line.split(' '))
+def md_table_row_to_array(line):
+    line = re.sub('(\ \|\ )', '-', line)
+    line = re.sub('(\|\ )|(\ \|)', '', line)
     line = line.replace("\\n", '')
-    output_file.write(line + '\n')
+    line = line.split('-')
     return line
 
 
-def add_md_checkbox(item):
-    return str('- [ ] ' + item + '\n')
+def add_md_checkbox(items):
+    items = items.split(';')
+    a = ""
+    for item in items:
+        a += str('- [ ] ' + item + '\n')
+    return a
 
 
 def format_description(description):
@@ -30,43 +34,43 @@ def format_description(description):
 
 
 def add_prefix_to_title(title, number, prefix='US', subid=''):
-    return str(prefix + subid + str(number) + title)
+    return str(prefix + subid + str(number) + " " + title)
 
 
 def get_all_lines(file):
     line = file.readline()
     file2 = open('xxx.txt', 'w+')
+
     while line:
-        md_tables_to_array(line, file2)
+        md_table_row_to_array(line)
         line = file.readline()
+
     file2.close()
 
 
-def create_issue_github(title, description, acceptance_criteria, repo_name, owner):
+def create_issue(title, description, acceptance_criteria):
+    issue = {'title': title, 'body': description + '\n' + acceptance_criteria}
+    issue = json.dumps(issue)
+    return issue
+
+
+def create_github_url(repo_name, owner):
     github = "/repos/%s/%s" % owner, repo_name
     endpoint = GITHUB_BASE_URL + github
-
-    issue = {'title': title, 'body': description + '\n' + acceptance_criteria}
-    issue = json.dumps(issue)
-
-    return make_api_call(issue, endpoint)
+    return github + endpoint
 
 
-def create_issue_gitlab(title, description, acceptance_criteria, repo_id, private_token):
+def create_gitlab_url(repo_id, private_token):
     gitlab = "/projects/%i/issues" % repo_id
     endpoint = GITLAB_BASE_URL + gitlab
-
-    issue = {'title': title, 'body': description + '\n' + acceptance_criteria}
-    issue = json.dumps(issue)
-
-    return make_api_call(issue, endpoint, private_token=private_token)
+    return gitlab + endpoint
 
 
 def make_api_call(json, url, private_token=None):
     if private_token is not None:
-        a = req.post(url, json=json, headers={'PRIVATE-TOKEN': private_token})
+        a = request.post(url, json=json, headers={'PRIVATE-TOKEN': private_token})
     else:
-        a = req.post(url, json=json)
+        a = request.post(url, json=json)
     return a.status_code
 
 
