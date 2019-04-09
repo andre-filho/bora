@@ -5,4 +5,5 @@ trim_trailing_whitespace = false
 
 [*.py]
 indent_size = 4
+tab_width = 4
 indent_style = space

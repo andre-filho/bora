@@ -1,4 +1,5 @@
 import md_issue_conv as conv
+import json
 
 
 def test_md_table_row_to_array():
@@ -28,7 +29,7 @@ def test_add_prefix_to_title():
     titles = ["make america great again", "make stuff work"]
     formattedUS = []
     formattedTS = []
-    
+
     for idx, title in enumerate(titles):
         formattedUS.append(conv.add_prefix_to_title(title, idx+1))
         formattedTS.append(conv.add_prefix_to_title(title, idx+1, prefix='TS'))
@@ -44,16 +45,22 @@ def test_create_issue():
     description = "American economy is currently a trash."
     acceptance_criteria = "- [ ] asdfasdfasdf\n"
     issue = conv.create_issue(title, description, acceptance_criteria)
-    
-    exp_json = '{"title": "US1 make america great again", "body": "American economy is currently a trash.\n- [ ] asdfasdfasdf\n"}'
 
-    if not issue == repr(exp_json):
+    exp_json = '{"body": "American economy is currently a trash.\\n- [ ] asdfasdfasdf\\n", "title": "US1 make america great again"}'
+
+    if not (repr(issue) == repr(exp_json)):
         raise AssertionError()
 
 
 def test_create_github_url():
-    pass
+    url = conv.create_github_url('commit-helper', 'andre-filho')
+    expected = "http://api.github.com/repos/andre-filho/commit-helper/issues"
+    if not url == expected:
+        raise AssertionError()
 
 
 def test_create_gitlab_url():
-    pass
+    url = conv.create_gitlab_url(1234)
+    expected = "http://gitlab.com/api/v4/projects/1234/issues"
+    if not url == expected:
+        raise AssertionError()

@@ -55,15 +55,15 @@ def create_issue(title, description, acceptance_criteria):
 
 
 def create_github_url(repo_name, owner):
-    github = "/repos/%s/%s" % owner, repo_name
+    github = "/repos/%s/%s/issues" % (owner, repo_name)
     endpoint = GITHUB_BASE_URL + github
-    return github + endpoint
+    return endpoint
 
 
-def create_gitlab_url(repo_id, private_token):
+def create_gitlab_url(repo_id):
     gitlab = "/projects/%i/issues" % repo_id
     endpoint = GITLAB_BASE_URL + gitlab
-    return gitlab + endpoint
+    return endpoint
 
 
 def make_api_call(json, url, private_token=None):
