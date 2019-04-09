@@ -40,11 +40,11 @@ def test_add_prefix_to_title():
         raise AssertionError()
 
 
-def test_create_issue():
+def test_create_issue_json():
     title = "US1 make america great again"
     description = "American economy is currently a trash."
     acceptance_criteria = "- [ ] asdfasdfasdf\n"
-    issue = conv.create_issue(title, description, acceptance_criteria)
+    issue = conv.create_issue_json(title, description, acceptance_criteria)
 
     exp_json = '{"body": "American economy is currently a trash.\\n- [ ] asdfasdfasdf\\n", "title": "US1 make america great again"}'
 

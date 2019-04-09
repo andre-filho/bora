@@ -3,8 +3,8 @@ import requests
 import json
 
 
-GITHUB_BASE_URL = "http://api.github.com"
-GITLAB_BASE_URL = "http://gitlab.com/api/v4"
+GITHUB_BASE_URL = "https://api.github.com"
+GITLAB_BASE_URL = "https://gitlab.com/api/v4"
 
 
 def remove_md_titles(line, file):
@@ -39,16 +39,15 @@ def add_prefix_to_title(title, number, prefix='US', subid=''):
 
 def get_all_lines(file):
     line = file.readline()
-    file2 = open('xxx.txt', 'w+')
-
+    lines = []
     while line:
-        md_table_row_to_array(line)
+        # md_table_row_to_array(line)
+        lines.append(line)
         line = file.readline()
+    return lines
 
-    file2.close()
 
-
-def create_issue(title, description, acceptance_criteria):
+def create_issue_json(title, description, acceptance_criteria):
     issue = {'title': title, 'body': description + '\n' + acceptance_criteria}
     issue = json.dumps(issue)
     return issue
@@ -68,16 +67,39 @@ def create_gitlab_url(repo_id):
 
 def make_api_call(json, url, private_token=None):
     if private_token is not None:
-        a = request.post(url, json=json, headers={'PRIVATE-TOKEN': private_token})
+        a = requests.post(url, json=json, headers={'PRIVATE-TOKEN': private_token})
     else:
-        a = request.post(url, json=json)
-    return a.status_code
+        a = requests.post(url, json=json, headers={'User-Agent': 'andre-filho'})
+    return a.json()
 
 
 if __name__ == "__main__":
     try:
         file = open('teste.md')
-        get_all_lines(file)
-
+        lines = get_all_lines(file)
+        rows = []
+        for line in lines:
+            rows.append(md_table_row_to_array(line))
+        print(rows)
+        print('-------------------')
+        for idx, row in enumerate(rows):
+            row[0] = add_prefix_to_title(row[0], idx+1)
+            row[1] = format_description(row[1])
+            row[2] = add_md_checkbox(row[2])
+        print(rows)
+        issues = []
+        print('-------------------')
+        for row in rows:
+            issues.append(create_issue_json(row[0], row[1], row[2]))
+        print(issues)
+        print(type(issues[0]))
+        print('-------------------')
+        url = create_github_url('commit-helper', 'andre-filho')
+        print(url)
+        responses = []
+        for issue in issues:
+            responses.append(make_api_call(issue, url))
+            print(responses)
+        print(requests.get(url).json())
     finally:
         file.close()
