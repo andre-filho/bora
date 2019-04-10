@@ -1,10 +1,19 @@
+import os
 import re
+import json as js
 import requests
-import json
+from os.path import join
+from os.path import dirname
+from dotenv import load_dotenv
 
+
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
 GITHUB_BASE_URL = "https://api.github.com"
 GITLAB_BASE_URL = "https://gitlab.com/api/v4"
+GITHUB_TOKEN = os.getenv('GHTOKEN')
+GITLAB_TOKEN = os.getenv('GITLABTOKEN')
 
 
 def remove_md_titles(line, file):
@@ -49,7 +58,7 @@ def get_all_lines(file):
 
 def create_issue_json(title, description, acceptance_criteria):
     issue = {'title': title, 'body': description + '\n' + acceptance_criteria}
-    issue = json.dumps(issue)
+    issue = js.dumps(issue)
     return issue
 
 
@@ -65,11 +74,11 @@ def create_gitlab_url(repo_id):
     return endpoint
 
 
-def make_api_call(json, url, private_token=None):
-    if private_token is not None:
-        a = requests.post(url, json=json, headers={'PRIVATE-TOKEN': private_token})
+def make_api_call(json, url, host):
+    if host is not 'github':
+        a = requests.post(url, json=js.dumps(json), headers={'PRIVATE-TOKEN': GITLAB_TOKEN})
     else:
-        a = requests.post(url, json=json, headers={'User-Agent': 'andre-filho'})
+        a = requests.post(url, json=js.dumps(json), headers={'Authorization': 'token {}'.format(GITHUB_TOKEN)})
     return a.json()
 
 
@@ -95,11 +104,11 @@ if __name__ == "__main__":
         print(type(issues[0]))
         print('-------------------')
         url = create_github_url('commit-helper', 'andre-filho')
+        # url = create_gitlab_url(9120898)
         print(url)
         responses = []
         for issue in issues:
-            responses.append(make_api_call(issue, url))
+            responses.append(make_api_call(issue, url, 'github'))
             print(responses)
-        print(requests.get(url).json())
     finally:
         file.close()
