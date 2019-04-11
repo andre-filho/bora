@@ -57,9 +57,8 @@ def get_all_lines(file):
 
 
 def create_issue_json(title, description, acceptance_criteria):
-    issue = {'title': title, 'body': description + '\n' + acceptance_criteria}
-    issue = js.dumps(issue)
-    return issue
+    body = "%s\n%s" % (description, acceptance_criteria)
+    return js.dumps({"title": title,"body": body})
 
 
 def create_github_url(repo_name, owner):
@@ -74,11 +73,15 @@ def create_gitlab_url(repo_id):
     return endpoint
 
 
-def make_api_call(json, url, host):
+def make_api_call(json_issue, url, host):
+    print(json_issue)
     if host is not 'github':
-        a = requests.post(url, json=js.dumps(json), headers={'PRIVATE-TOKEN': GITLAB_TOKEN})
+        a = requests.post(url, data=json_issue, headers={
+                          'PRIVATE-TOKEN': GITLAB_TOKEN, 'Content-Type': 'application/json'})
     else:
-        a = requests.post(url, json=js.dumps(json), headers={'Authorization': 'token {}'.format(GITHUB_TOKEN)})
+        auth = 'Bearer %s' % GITHUB_TOKEN
+        a = requests.post(url, data=json_issue, headers={
+                          'Authorization': auth, 'Content-Type': 'application/json'})
     return a.json()
 
 
@@ -98,17 +101,14 @@ if __name__ == "__main__":
         print(rows)
         issues = []
         print('-------------------')
-        for row in rows:
-            issues.append(create_issue_json(row[0], row[1], row[2]))
-        print(issues)
-        print(type(issues[0]))
-        print('-------------------')
         url = create_github_url('commit-helper', 'andre-filho')
         # url = create_gitlab_url(9120898)
         print(url)
         responses = []
-        for issue in issues:
-            responses.append(make_api_call(issue, url, 'github'))
-            print(responses)
+        for row in rows:
+            responses.append(make_api_call(create_issue_json(row[0], row[1], row[2]), url, 'github'))
+        for resp in responses:
+            print('\n')
+            print(resp)
     finally:
         file.close()
