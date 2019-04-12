@@ -1,5 +1,5 @@
-import md_issue_conv as conv
 import json
+import md_issue_conv as conv
 
 
 def test_md_table_row_to_array():
