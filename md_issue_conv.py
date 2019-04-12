@@ -91,10 +91,10 @@ def main(filename, repo_host):
 
         for row in rows:
             responses.append(make_api_call(create_issue_json(
-                row[0], row[1], row[2]), url, 'github'))
+                row[0], row[1], row[2]), url, repo_host))
 
         for resp in responses:
-            print('\n')
+            print('\n\nRespose:\n')
             print(resp)
     finally:
         file.close()
