@@ -42,7 +42,7 @@ def encrypt(line):
     return f.encrypt(line)
 
 
-def decrypt(encrypted_line):
+def decrypt_token(encrypted_line):
     k = get_key()
     f = Fernet(k)
     return f.decrypt(encrypted_line)
@@ -72,16 +72,16 @@ def write_tokens(github_key, gitlab_key):
 def get_token(repo_manager):
     if repo_manager is 'github':
         file = open(hub_path, 'rb')
-        enc = file.readline()
-        token = decrypt(enc)
+        enc = file.read()
+        token = decrypt_token(enc)
         return token.decode()
     elif repo_manager is 'gitlab':
         file = open(hub_path, 'rb')
-        enc = file.readline()
-        token = decrypt(enc)
+        enc = file.read()
+        token = decrypt_token(enc)
         return token.decode()
     # else:
         # it would be nice to raise an exception here btw
         # pass
-    # token = decrypt(enc)
+    # token = decrypt_token(enc)
     # return token.decode()
