@@ -2,12 +2,16 @@ import os
 import re
 import click
 import requests
+import getpass
 import json as js
 from os.path import join
 from os.path import dirname
 from dotenv import load_dotenv
 
 from converter.manipulation import *
+from secops.secops_basic import get_token
+from secops.secops_basic import write_tokens
+from secops.secops_basic import create_secure_key
 
 
 dotenv_path = join(dirname(__file__), '.env')
@@ -42,17 +46,20 @@ def create_gitlab_url(repo_id):
 
 def make_api_call(json_issue, url, host):
     print(json_issue)
+    
+    my_token = get_token(host)
+    print(my_token)
     if host is not 'github':
         a = requests.post(
             url,
             data=json_issue,
             headers={
-                'PRIVATE-TOKEN': GITLAB_TOKEN,
+                'PRIVATE-TOKEN': my_token,
                 'Content-Type': 'application/json'
             }
         )
     else:
-        auth = 'Bearer %s' % GITHUB_TOKEN
+        auth = 'Bearer %s' % my_token
         a = requests.post(
             url,
             data=json_issue,
@@ -109,7 +116,14 @@ def main(filename, repo_host, prefix, subid, numerate):
 
 
 def config():
-    pass
+    ghtk = getpass.getpass(prompt="Please insert your github token: ")
+    gltk = getpass.getpass(prompt="Please insert your gitlab token: ")
+    b = create_secure_key()
+    a = write_tokens(ghtk, gltk)
+    if a:
+        print("Created config files successfully!\n(They're encrypted, don't worry)")
+    else:
+        print("Something went wrong, please try again.")
 
 
 if __name__ == "__main__":

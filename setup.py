@@ -45,7 +45,8 @@ setup(  # pragma: no cover
     keywords=['bora', 'issue', 'markdown', 'api', 'github', 'gitlab', 'markdown converter'],
     entry_points={
         'console_scripts': [
-            'bora = bora'
+            'bora = bora',
+            'bora config = bora.config'
         ]
     },
     install_requires=REQUIREMENTS,
