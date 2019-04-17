@@ -27,15 +27,16 @@ def format_description(description):
     return str('**Issue description:**\n' + description + '\n')
 
 
-def add_prefix_to_title(title, number, prefix='US', subid=''):
-    return str(prefix + subid + str(number) + " " + title)
+def add_prefix_to_title(title, number, prefix, subid, numerate):
+    if numerate:
+        return str(prefix.upper() + subid.upper() + str(number) + " " + title)
+    return str(prefix.upper() + subid.upper() + " " + title)
 
 
 def get_all_lines(file):
     line = file.readline()
     lines = []
     while line:
-        # md_table_row_to_array(line)
         lines.append(line)
         line = file.readline()
     return lines

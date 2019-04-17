@@ -19,8 +19,12 @@ GITHUB_TOKEN = os.getenv('GHTOKEN')
 GITLAB_TOKEN = os.getenv('GITLABTOKEN')
 
 
-def create_issue_json(title, description, acceptance_criteria):
+def create_issue_json(title, description, acceptance_criteria, repo_host):
     body = "%s\n%s" % (description, acceptance_criteria)
+
+    if repo_host == 'gitlab':
+        return js.dumps({"title": title, "description": body})
+
     return js.dumps({"title": title, "body": body})
 
 
@@ -61,9 +65,12 @@ def make_api_call(json_issue, url, host):
 
 
 @click.command()
-@click.argument('filename', required=True)
-@click.argument("repo_host", type=click.Choice(['github', 'gitlab'], case_sensitive=False), required=True)
-def main(filename, repo_host):
+@click.argument("filename", required=True)
+@click.argument("repo_host", type=click.Choice(["github", "gitlab"], case_sensitive=False), required=True)
+@click.option("--subid", required=False, default="", type=str)
+@click.option("--numerate", required=False, default=True, type=bool)
+@click.option("--prefix", required=False, default="", type=click.Choice(["US", "TS", ""], case_sensitive=False))
+def main(filename, repo_host, prefix, subid, numerate):
     try:
         file = open(filename)
         lines = get_all_lines(file)
@@ -73,7 +80,8 @@ def main(filename, repo_host):
             rows.append(md_table_row_to_array(line))
 
         for idx, row in enumerate(rows):
-            row[0] = add_prefix_to_title(row[0], idx+1)
+            row[0] = add_prefix_to_title(
+                row[0], idx+1, prefix, subid, numerate)
             row[1] = format_description(row[1])
             row[2] = add_md_checkbox(row[2])
 
@@ -85,19 +93,23 @@ def main(filename, repo_host):
         else:
             repo = int(input("Enter the repo id: (Ex.: 9120898)\n"))
             url = create_gitlab_url(repo)
-            
+
         print(url)
         responses = []
 
         for row in rows:
             responses.append(make_api_call(create_issue_json(
-                row[0], row[1], row[2]), url, repo_host))
+                row[0], row[1], row[2], repo_host), url, repo_host))
 
         for resp in responses:
             print('\n\nRespose:\n')
             print(resp)
     finally:
         file.close()
+
+
+def config():
+    pass
 
 
 if __name__ == "__main__":
