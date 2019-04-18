@@ -70,13 +70,13 @@ def write_tokens(github_key, gitlab_key):
 
 
 def get_token(repo_manager):
-    if repo_manager is 'github':
+    if repo_manager == 'github':
         file = open(hub_path, 'rb')
         enc = file.read()
         token = decrypt_token(enc)
         return token.decode()
-    elif repo_manager is 'gitlab':
-        file = open(hub_path, 'rb')
+    elif repo_manager == 'gitlab':
+        file = open(lab_path, 'rb')
         enc = file.read()
         token = decrypt_token(enc)
         return token.decode()
