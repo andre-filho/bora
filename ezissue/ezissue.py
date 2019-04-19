@@ -9,6 +9,7 @@ from os.path import dirname
 
 from ezissue.converter.manipulation import *
 from ezissue.secops.secops_basic import get_token
+from ezissue.secops.secops_basic import folder_path
 from ezissue.secops.secops_basic import write_tokens
 from ezissue.secops.secops_basic import create_secure_key
 
@@ -72,6 +73,9 @@ def make_api_call(json_issue, url, host):
 @click.option("--numerate", required=False, default=True, type=bool)
 @click.option("--prefix", required=False, default="", type=click.Choice(["US", "TS", "", "BUG"], case_sensitive=False))
 def main(filename, repo_host, prefix, subid, numerate):
+    if not os.path.isfile(folder_path + 'key.key'):
+        config()
+
     try:
         file = open(filename)
         lines = get_all_lines(file)
@@ -110,6 +114,7 @@ def main(filename, repo_host, prefix, subid, numerate):
 
 
 def config():
+    print("Config file not found! Initializing configuration...")
     ghtk = getpass.getpass(prompt="Please insert your github token: ")
     gltk = getpass.getpass(prompt="Please insert your gitlab token: ")
     b = create_secure_key()
