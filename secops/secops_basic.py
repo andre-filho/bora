@@ -1,12 +1,10 @@
 import os
 import getpass
 from cryptography.fernet import Fernet
-# from Crypto.Hash import SHA
-# https://www.youtube.com/watch?v=H8t4DJ3Tdrg
 
 
 homedir_path = os.getenv('HOME')
-folder_path = homedir_path + '/.bora/'
+folder_path = homedir_path + '/.ezissue/'
 hub_path = folder_path + 'hub'
 lab_path = folder_path + 'lab'
 
@@ -82,6 +80,3 @@ def get_token(repo_manager):
         return token.decode()
     # else:
         # it would be nice to raise an exception here btw
-        # pass
-    # token = decrypt_token(enc)
-    # return token.decode()

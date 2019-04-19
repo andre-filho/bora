@@ -33,20 +33,20 @@ CLASSIFIERS = [
 ]
 
 setup(  # pragma: no cover
-    name='bora',
+    name='ezissue',
     description="The ultimate aid in the issue creation process.",  # nopep8
-    url='https://github.com/andre-filho/bora',
+    url='https://github.com/andre-filho/ezissue',
     long_description=codecs.open('README.md', 'rb', 'utf8').read(),
     long_description_content_type='text/markdown',
     author='Andre de Sousa Costa Filho',
     author_email='andre.filho001@outlook.com',
     version=codecs.open('VERSION.txt', 'rb', 'utf8').read(),
     packages=find_packages(),
-    keywords=['bora', 'issue', 'markdown', 'api', 'github', 'gitlab', 'markdown converter'],
+    keywords=['ezissue', 'issue', 'markdown', 'api', 'github', 'gitlab', 'markdown converter'],
     entry_points={
         'console_scripts': [
-            'bora = bora',
-            'bora config = bora.config'
+            'ezissue = ezissue',
+            'ezissue config = ezissue.config'
         ]
     },
     install_requires=REQUIREMENTS,

@@ -1,12 +1,12 @@
 import os
 import re
 import click
-import requests
 import getpass
+import requests
 import json as js
 from os.path import join
 from os.path import dirname
-from dotenv import load_dotenv
+from dotenv import Dotenv
 
 from converter.manipulation import *
 from secops.secops_basic import get_token
@@ -15,7 +15,8 @@ from secops.secops_basic import create_secure_key
 
 
 dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+dotenv = Dotenv(dotenv_path)
+os.environ.update(dotenv)
 
 GITHUB_BASE_URL = "https://api.github.com"
 GITLAB_BASE_URL = "https://gitlab.com/api/v4"
@@ -76,7 +77,7 @@ def make_api_call(json_issue, url, host):
 @click.argument("repo_host", type=click.Choice(["github", "gitlab"], case_sensitive=False), required=True)
 @click.option("--subid", required=False, default="", type=str)
 @click.option("--numerate", required=False, default=True, type=bool)
-@click.option("--prefix", required=False, default="", type=click.Choice(["US", "TS", ""], case_sensitive=False))
+@click.option("--prefix", required=False, default="", type=click.Choice(["US", "TS", "", "BUG"], case_sensitive=False))
 def main(filename, repo_host, prefix, subid, numerate):
     try:
         file = open(filename)
