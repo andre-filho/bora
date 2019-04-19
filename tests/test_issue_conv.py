@@ -1,5 +1,5 @@
 import json
-import ezissue
+import ezissue.ezissue as ezissue
 
 
 def test_md_table_row_to_array():

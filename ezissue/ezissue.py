@@ -6,22 +6,15 @@ import requests
 import json as js
 from os.path import join
 from os.path import dirname
-from dotenv import Dotenv
 
-from converter.manipulation import *
-from secops.secops_basic import get_token
-from secops.secops_basic import write_tokens
-from secops.secops_basic import create_secure_key
+from ezissue.converter.manipulation import *
+from ezissue.secops.secops_basic import get_token
+from ezissue.secops.secops_basic import write_tokens
+from ezissue.secops.secops_basic import create_secure_key
 
-
-dotenv_path = join(dirname(__file__), '.env')
-dotenv = Dotenv(dotenv_path)
-os.environ.update(dotenv)
 
 GITHUB_BASE_URL = "https://api.github.com"
 GITLAB_BASE_URL = "https://gitlab.com/api/v4"
-GITHUB_TOKEN = os.getenv('GHTOKEN')
-GITLAB_TOKEN = os.getenv('GITLABTOKEN')
 
 
 def create_issue_json(title, description, acceptance_criteria, repo_host):

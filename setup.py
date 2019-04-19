@@ -45,8 +45,7 @@ setup(  # pragma: no cover
     keywords=['ezissue', 'issue', 'markdown', 'api', 'github', 'gitlab', 'markdown converter'],
     entry_points={
         'console_scripts': [
-            'ezissue = ezissue',
-            'ezissue config = ezissue.config'
+            'ezissue = ezissue.ezissue:main'
         ]
     },
     install_requires=REQUIREMENTS,
