@@ -29,8 +29,8 @@ def format_description(description):
 
 def add_prefix_to_title(title, number, prefix, subid, numerate):
     if numerate:
-        return str(prefix.upper() + subid.upper() + str(number) + " " + title)
-    return str(prefix.upper() + subid.upper() + " " + title)
+        return str(prefix.upper() + subid.upper() + str(number) + " " + title.capitalize())
+    return str(prefix.upper() + subid.upper() + " " + title.capitalize())
 
 
 def get_all_lines(file):

@@ -14,7 +14,7 @@ from ezissue.secops.secops_basic import write_tokens
 from ezissue.secops.secops_basic import create_secure_key
 
 
-GITHUB_BASE_URL = "https://api.github.com"
+GITHUB_BASE_URL = "http://api.github.com"
 GITLAB_BASE_URL = "https://gitlab.com/api/v4"
 
 
@@ -43,8 +43,7 @@ def make_api_call(json_issue, url, host):
     print(json_issue)
     
     my_token = get_token(host)
-    print(my_token)
-    if host is not 'github':
+    if not host == 'github':
         a = requests.post(
             url,
             data=json_issue,
@@ -63,7 +62,7 @@ def make_api_call(json_issue, url, host):
                 'Content-Type': 'application/json'
             }
         )
-    return a.json()
+    return a
 
 
 @click.command()
@@ -99,16 +98,21 @@ def main(filename, repo_host, prefix, subid, numerate):
             repo = int(input("Enter the repo id: (Ex.: 9120898)\n"))
             url = create_gitlab_url(repo)
 
-        print(url)
+        print(repr(url))
         responses = []
 
         for row in rows:
-            responses.append(make_api_call(create_issue_json(
-                row[0], row[1], row[2], repo_host), url, repo_host))
+            responses.append(
+                make_api_call(
+                    create_issue_json(row[0], row[1], row[2], repo_host),
+                    url,
+                    repo_host
+                )
+            )
 
         for resp in responses:
             print('\n\nRespose:\n')
-            print(resp)
+            print(resp.status_code)
     finally:
         file.close()
 
