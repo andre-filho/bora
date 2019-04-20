@@ -14,7 +14,7 @@ from ezissue.secops.secops_basic import write_tokens
 from ezissue.secops.secops_basic import create_secure_key
 
 
-GITHUB_BASE_URL = "http://api.github.com"
+GITHUB_BASE_URL = "https://api.github.com"
 GITLAB_BASE_URL = "https://gitlab.com/api/v4"
 
 
@@ -22,13 +22,13 @@ def create_issue_json(title, description, acceptance_criteria, repo_host):
     body = "%s\n%s" % (description, acceptance_criteria)
 
     if repo_host == 'gitlab':
-        return js.dumps({"title": title, "description": body})
+        return {"title": title, "description": body}
 
-    return js.dumps({"title": title, "body": body})
+    return {"title": title, "body": body}
 
 
 def create_github_url(repo_name, owner):
-    github = "/repos/%s/%s/issues" % (owner, repo_name)
+    github = "/repos/%s/%s/issues" % (owner.lower(), repo_name.lower())
     endpoint = GITHUB_BASE_URL + github
     return endpoint
 
@@ -46,7 +46,7 @@ def make_api_call(json_issue, url, host):
     if not host == 'github':
         a = requests.post(
             url,
-            data=json_issue,
+            data=js.dumps(json_issue),
             headers={
                 'PRIVATE-TOKEN': my_token,
                 'Content-Type': 'application/json'
@@ -56,8 +56,9 @@ def make_api_call(json_issue, url, host):
         auth = 'Bearer %s' % my_token
         a = requests.post(
             url,
-            data=json_issue,
+            data=js.dumps(json_issue),
             headers={
+                'Accept': 'application/vnd.github.v3+json',
                 'Authorization': auth,
                 'Content-Type': 'application/json'
             }
@@ -99,6 +100,7 @@ def main(filename, repo_host, prefix, subid, numerate):
             url = create_gitlab_url(repo)
 
         print(repr(url))
+        print(repr(repo_host))
         responses = []
 
         for row in rows:
@@ -111,7 +113,7 @@ def main(filename, repo_host, prefix, subid, numerate):
             )
 
         for resp in responses:
-            print('\n\nRespose:\n')
+            # print('\nRespose:\n')
             print(resp.status_code)
     finally:
         file.close()
