@@ -22,13 +22,13 @@ def create_issue_json(title, description, acceptance_criteria, repo_host):
     body = "%s\n%s" % (description, acceptance_criteria)
 
     if repo_host == 'gitlab':
-        return js.dumps({"title": title, "description": body})
+        return {"title": title, "description": body}
 
-    return js.dumps({"title": title, "body": body})
+    return {"title": title, "body": body}
 
 
 def create_github_url(repo_name, owner):
-    github = "/repos/%s/%s/issues" % (owner, repo_name)
+    github = "/repos/%s/%s/issues" % (owner.lower(), repo_name.lower())
     endpoint = GITHUB_BASE_URL + github
     return endpoint
 
@@ -43,11 +43,10 @@ def make_api_call(json_issue, url, host):
     print(json_issue)
     
     my_token = get_token(host)
-    print(my_token)
-    if host is not 'github':
+    if not host == 'github':
         a = requests.post(
             url,
-            data=json_issue,
+            data=js.dumps(json_issue),
             headers={
                 'PRIVATE-TOKEN': my_token,
                 'Content-Type': 'application/json'
@@ -57,13 +56,14 @@ def make_api_call(json_issue, url, host):
         auth = 'Bearer %s' % my_token
         a = requests.post(
             url,
-            data=json_issue,
+            data=js.dumps(json_issue),
             headers={
+                'Accept': 'application/vnd.github.v3+json',
                 'Authorization': auth,
                 'Content-Type': 'application/json'
             }
         )
-    return a.json()
+    return a
 
 
 @click.command()
@@ -99,16 +99,22 @@ def main(filename, repo_host, prefix, subid, numerate):
             repo = int(input("Enter the repo id: (Ex.: 9120898)\n"))
             url = create_gitlab_url(repo)
 
-        print(url)
+        print(repr(url))
+        print(repr(repo_host))
         responses = []
 
         for row in rows:
-            responses.append(make_api_call(create_issue_json(
-                row[0], row[1], row[2], repo_host), url, repo_host))
+            responses.append(
+                make_api_call(
+                    create_issue_json(row[0], row[1], row[2], repo_host),
+                    url,
+                    repo_host
+                )
+            )
 
         for resp in responses:
-            print('\n\nRespose:\n')
-            print(resp)
+            # print('\nRespose:\n')
+            print(resp.status_code)
     finally:
         file.close()
 

@@ -25,19 +25,48 @@ def test_format_description():
         raise AssertionError()
 
 
-# FIXME
 def test_add_prefix_to_title():
     titles = ["make america great again", "make stuff work"]
     formattedUS = []
     formattedTS = []
+    common_issues = []
 
     for idx, title in enumerate(titles):
-        formattedUS.append(ezissue.add_prefix_to_title(title, idx+1))
-        formattedTS.append(ezissue.add_prefix_to_title(title, idx+1, prefix='TS'))
+        formattedUS.append(
+            ezissue.add_prefix_to_title(title, idx+1, 'US', '', True)
+        )
+        formattedTS.append(
+            ezissue.add_prefix_to_title(title, idx+1, 'TS', '', True)
+        )
+    for idx, title in enumerate(titles):
+        formattedUS.append(
+            ezissue.add_prefix_to_title(title, idx+1, 'US', 'M', False)
+        )
+        formattedTS.append(
+            ezissue.add_prefix_to_title(title, idx+1, 'TS', 'M', False)
+        )
+    for idx, title in enumerate(titles):
+        formattedUS.append(
+            ezissue.add_prefix_to_title(title, idx+1, '', '', False)
+        )
+        formattedTS.append(
+            ezissue.add_prefix_to_title(title, idx+1, '', '', False)
+        )
 
-    if not (formattedUS[0] == 'US1 make america great again' and formattedTS[0] == 'TS1 make america great again'):
+
+    if not (formattedUS[0] == 'US1 Make america great again' and formattedTS[0] == 'TS1 Make america great again'):
         raise AssertionError()
-    if not (formattedUS[1] == 'US2 make stuff work' and formattedTS[1] == 'TS2 make stuff work'):
+    if not (formattedUS[1] == 'US2 Make stuff work' and formattedTS[1] == 'TS2 Make stuff work'):
+        raise AssertionError()
+
+    if not (formattedUS[2] == 'USM Make america great again' and formattedTS[2] == 'TSM Make america great again'):
+        raise AssertionError()
+    if not (formattedUS[3] == 'USM Make stuff work' and formattedTS[3] == 'TSM Make stuff work'):
+        raise AssertionError()
+
+    if not (formattedUS[4] == ' Make america great again' and formattedTS[4] == ' Make america great again'):
+        raise AssertionError()
+    if not (formattedUS[5] == ' Make stuff work' and formattedTS[5] == ' Make stuff work'):
         raise AssertionError()
 
 
