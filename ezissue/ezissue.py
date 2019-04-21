@@ -1,11 +1,8 @@
 import os
-import re
 import click
 import getpass
 import requests
 import json as js
-from os.path import join
-from os.path import dirname
 
 from ezissue.converter.manipulation import *
 from ezissue.secops.secops_basic import get_token
@@ -41,7 +38,7 @@ def create_gitlab_url(repo_id):
 
 def make_api_call(json_issue, url, host):
     print(json_issue)
-    
+
     my_token = get_token(host)
     if not host == 'github':
         a = requests.post(
@@ -90,7 +87,6 @@ def main(filename, repo_host, prefix, subid, numerate):
             row[1] = format_description(row[1])
             row[2] = add_md_checkbox(row[2])
 
-        issues = []
         if repo_host == 'github':
             repo = input("Enter repo name: (Ex.: username/repo)\n")
             repo = repo.split('/')
@@ -123,7 +119,7 @@ def config():
     print("Config file not found! Initializing configuration...")
     ghtk = getpass.getpass(prompt="Please insert your github token: ")
     gltk = getpass.getpass(prompt="Please insert your gitlab token: ")
-    b = create_secure_key()
+    create_secure_key()
     a = write_tokens(ghtk, gltk)
     if a:
         print("Created config files successfully!\n(They're encrypted, don't worry)")

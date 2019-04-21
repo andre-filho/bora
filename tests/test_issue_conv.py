@@ -1,4 +1,3 @@
-import json
 import ezissue.ezissue as ezissue
 
 
@@ -29,7 +28,6 @@ def test_add_prefix_to_title():
     titles = ["make america great again", "make stuff work"]
     formattedUS = []
     formattedTS = []
-    common_issues = []
 
     for idx, title in enumerate(titles):
         formattedUS.append(
@@ -86,7 +84,6 @@ def test_add_prefix_to_title():
 def test_create_github_url():
     url = ezissue.create_github_url('commit-helper', 'andre-filho')
     expected = "https://api.github.com/repos/andre-filho/commit-helper/issues"
-    print(url)
     if not url == expected:
         raise AssertionError()
 
