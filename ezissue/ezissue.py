@@ -64,11 +64,33 @@ def make_api_call(json_issue, url, host):
 
 
 @click.command()
-@click.argument("filename", required=True)
-@click.argument("repo_host", type=click.Choice(["github", "gitlab"], case_sensitive=False), required=True)
-@click.option("--subid", required=False, default="", type=str)
-@click.option("--numerate", required=False, default=True, type=bool)
-@click.option("--prefix", required=False, default="", type=click.Choice(["US", "TS", "", "BUG"], case_sensitive=False))
+@click.argument(
+    "filename",
+    required=True
+)
+@click.argument(
+    "repo_host",
+    type=click.Choice(["github", "gitlab"], case_sensitive=False),
+    required=True
+)
+@click.option(
+    "--subid",
+    required=False,
+    default="",
+    type=str
+)
+@click.option(
+    "--numerate",
+    required=False,
+    default=True,
+    type=bool
+)
+@click.option(
+    "--prefix",
+    required=False,
+    default="",
+    type=click.Choice(["US", "TS", "", "BUG"], case_sensitive=False)
+)
 def main(filename, repo_host, prefix, subid, numerate):
     if not os.path.isfile(folder_path + 'key.key'):
         config()
@@ -122,7 +144,8 @@ def config():
     create_secure_key()
     a = write_tokens(ghtk, gltk)
     if a:
-        print("Created config files successfully!\n(They're encrypted, don't worry)")
+        print("Created config files successfully!")
+        print("(They're encrypted, don't worry)")
     else:
         print("Something went wrong, please try again.")
 
