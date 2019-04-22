@@ -9,11 +9,11 @@ install:
 - pip install -r dev-requirements.txt
 
 script:
-- pytest test/ -v
+- pytest tests/ -v
 - pycodestyle ezissue/*
 
 after_script:
-- py.test --cov-report term --cov=. --ignore=test/* --cov-report=html
+- py.test --cov-report term --cov=. --ignore=tests/* --cov-report=html
 - coverage xml
 - python-codacy-coverage -r coverage.xml
 
