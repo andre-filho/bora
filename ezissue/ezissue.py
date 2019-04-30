@@ -4,6 +4,7 @@ import getpass
 import requests
 import json as js
 
+import ezissue.utils as u
 from ezissue.converter.manipulation import *
 from ezissue.secops.secops_basic import get_token
 from ezissue.secops.secops_basic import folder_path
@@ -36,8 +37,8 @@ def create_gitlab_url(repo_id):
     return endpoint
 
 
-def make_api_call(json_issue, url, host):
-    print(json_issue)
+def make_api_call(json_issue, url, host, debug):
+    u.debug(json_issue, debug)
 
     my_token = get_token(host)
     if not host == 'github':
@@ -60,7 +61,7 @@ def make_api_call(json_issue, url, host):
                 'Content-Type': 'application/json'
             }
         )
-    return a
+    return a, json_issue
 
 
 @click.command()
@@ -75,23 +76,35 @@ def make_api_call(json_issue, url, host):
 )
 @click.option(
     "--subid",
+    "-s",
     required=False,
     default="",
-    type=str
+    type=str,
+    help='Pass an sub-id into the issue\'s title'
 )
 @click.option(
     "--numerate",
+    "-n",
     required=False,
-    default=True,
-    type=bool
+    is_flag=True,
+    help='Numerate the issues on the table\'s order'
 )
 @click.option(
     "--prefix",
+    "-p",
     required=False,
     default="",
-    type=click.Choice(["US", "TS", "", "BUG"], case_sensitive=False)
+    type=click.Choice(["US", "TS", "", "BUG"], case_sensitive=False),
+    help='Adds a prefix on the issue\'s title'
 )
-def main(filename, repo_host, prefix, subid, numerate):
+@click.option(
+    "--debug",
+    "-d",
+    default=False,
+    is_flag=True,
+    help='Enables debug mode'
+)
+def main(filename, repo_host, prefix, subid, numerate, debug):
     if not os.path.isfile(folder_path + 'key.key'):
         config()
 
@@ -110,44 +123,41 @@ def main(filename, repo_host, prefix, subid, numerate):
             row[2] = add_md_checkbox(row[2])
 
         if repo_host == 'github':
-            repo = input("Enter repo name: (Ex.: username/repo)\n")
+            repo = u.get_from_user("Enter repo name: (Ex.: username/repo)")
             repo = repo.split('/')
             url = create_github_url(repo[1], repo[0])
         else:
-            repo = int(input("Enter the repo id: (Ex.: 9120898)\n"))
+            repo = int(u.get_from_user("Enter the repo id: (Ex.: 9120898)"))
             url = create_gitlab_url(repo)
 
-        print(repr(url))
-        print(repr(repo_host))
+        u.debug(repr(url), debug)
+        u.debug(repr(repo_host), debug)
         responses = []
 
         for row in rows:
-            responses.append(
-                make_api_call(
-                    create_issue_json(row[0], row[1], row[2], repo_host),
-                    url,
-                    repo_host
-                )
+            req_resp, req_json = make_api_call(
+                create_issue_json(row[0], row[1], row[2], repo_host),
+                url,
+                repo_host,
+                debug
             )
+            u.show_resp_req(req_json, req_resp)
 
-        for resp in responses:
-            # print('\nRespose:\n')
-            print(resp.status_code)
     finally:
         file.close()
 
 
 def config():
-    print("Config file not found! Initializing configuration...")
+    u.notify("Config file not found! Initializing configuration...")
     ghtk = getpass.getpass(prompt="Please insert your github token: ")
     gltk = getpass.getpass(prompt="Please insert your gitlab token: ")
     create_secure_key()
     a = write_tokens(ghtk, gltk)
     if a:
-        print("Created config files successfully!")
-        print("(They're encrypted, don't worry)")
+        u.prompt("Created config files successfully!")
+        u.prompt("(They're encrypted, don't worry)")
     else:
-        print("Something went wrong, please try again.")
+        u.prompt("Something went wrong, please try again.")
 
 
 if __name__ == "__main__":
