@@ -32,8 +32,9 @@ def error(text):
 
 def show_resp_req(req_json, res):
 
-    prompt('\nRequest\'s json ~> %s' % req_json)    
+    prompt('\nRequest\'s json ~> %s' % req_json)
     if res.status_code == 201:
-        print('Request\'s response ~> %s%d%s'%(SUC, res.status_code, RESET))
+        print('Request\'s response ~> %s%d%s' % (SUC, res.status_code, RESET))
     else:
-        print('Request\'s response ~> %s%d%s'%(ERROR, res.status_code, RESET))
+        print('Request\'s response ~> %s%d%s' %
+              (ERROR, res.status_code, RESET))
