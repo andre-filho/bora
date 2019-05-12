@@ -1,4 +1,3 @@
-import json
 import ezissue.ezissue as ezissue
 
 
@@ -29,7 +28,6 @@ def test_add_prefix_to_title():
     titles = ["make america great again", "make stuff work"]
     formattedUS = []
     formattedTS = []
-    common_issues = []
 
     for idx, title in enumerate(titles):
         formattedUS.append(
@@ -53,7 +51,6 @@ def test_add_prefix_to_title():
             ezissue.add_prefix_to_title(title, idx+1, '', '', False)
         )
 
-
     if not (formattedUS[0] == 'US1 Make america great again' and formattedTS[0] == 'TS1 Make america great again'):
         raise AssertionError()
     if not (formattedUS[1] == 'US2 Make stuff work' and formattedTS[1] == 'TS2 Make stuff work'):
@@ -70,23 +67,9 @@ def test_add_prefix_to_title():
         raise AssertionError()
 
 
-# issue's json is being created nicely, but test breaks randomly
-# def test_create_issue_json():
-#     title = "US1 make america great again"
-#     description = "American economy is currently a trash."
-#     acceptance_criteria = "- [ ] asdfasdfasdf\n"
-#     issue = ezissue.create_issue_json(title, description, acceptance_criteria)
-
-#     exp_json = '{"body": "American economy is currently a trash.\\n- [ ] asdfasdfasdf\\n", "title": "US1 make america great again"}'
-
-#     if not (repr(issue) == repr(exp_json)):
-#         raise AssertionError()
-
-
 def test_create_github_url():
     url = ezissue.create_github_url('commit-helper', 'andre-filho')
     expected = "https://api.github.com/repos/andre-filho/commit-helper/issues"
-    print(url)
     if not url == expected:
         raise AssertionError()
 

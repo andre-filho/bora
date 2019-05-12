@@ -1,5 +1,4 @@
 import os
-import getpass
 from cryptography.fernet import Fernet
 
 
@@ -68,15 +67,17 @@ def write_tokens(github_key, gitlab_key):
 
 
 def get_token(repo_manager):
+    enc = ''
+    token = ''
+    file = ''
+
     if repo_manager == 'github':
         file = open(hub_path, 'rb')
-        enc = file.read()
-        token = decrypt_token(enc)
-        return token.decode()
     elif repo_manager == 'gitlab':
         file = open(lab_path, 'rb')
-        enc = file.read()
-        token = decrypt_token(enc)
-        return token.decode()
     # else:
         # it would be nice to raise an exception here btw
+
+    enc = file.read()
+    token = decrypt_token(enc)
+    return token.decode()
