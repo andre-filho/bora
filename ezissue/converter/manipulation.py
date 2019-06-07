@@ -11,7 +11,8 @@ def remove_md_titles(line):
 
 
 def md_table_row_to_array(line):
-    line = re.sub(r'(\ \|\ )', '-', line)   # this will need to be fixed at some moment
+    # this will need to be fixed at some moment
+    line = re.sub(r'(\ \|\ )', '-', line)
     line = re.sub(r'(\|\ )|(\ \|)', '', line)
     line = line.replace("\n", '')
     line = line.split('-')
@@ -46,8 +47,8 @@ def get_all_lines(file):
         lines.append(line)
         line = file.readline()
     return lines
-    
-    
+
+
 def get_table_spec(line):
     thead = md_table_row_to_array(line)
     return len(thead), thead
@@ -60,7 +61,7 @@ def format_acc_criteria(string):
     acc_criteria = "**Acceptance criteria:**\n"
 
     return "%s%s" % (acc_criteria, checkboxes)
-    
+
 
 def format_tasks(string):
     checkboxes = add_md_checkbox(string)

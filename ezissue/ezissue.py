@@ -21,7 +21,8 @@ def create_issue_json(tconf, values, repo_host):
     d = dict()
 
     if n_fields != len(values):
-        u.error('Error: markdown table header and contents columns do not match!')
+        u.error(
+            'Error: markdown table header and contents columns do not match!')
         raise
 
     for idx in range(n_fields):
