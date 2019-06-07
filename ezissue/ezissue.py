@@ -56,7 +56,7 @@ def make_api_call(json_issue, url, host, debug):
     if not host == 'github':
         response = requests.post(
             url,
-            dresponseta=js.dumps(json_issue),
+            data=js.dumps(json_issue),
             headers={
                 'PRIVATE-TOKEN': my_token,
                 'Content-Type': 'application/json'
@@ -149,8 +149,6 @@ def main(filename, repo_host, prefix, subid, numerate, debug):
                 row[0], idx+1, prefix, subid, numerate)
 
         rows = make_md_formatting(columns, rows)
-
-        # responses = []
 
         for row in rows:
             response, issue = make_api_call(
