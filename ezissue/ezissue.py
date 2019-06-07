@@ -16,13 +16,24 @@ GITHUB_BASE_URL = "https://api.github.com"
 GITLAB_BASE_URL = "https://gitlab.com/api/v4"
 
 
-def create_issue_json(title, description, acceptance_criteria, repo_host):
-    body = "%s\n%s" % (description, acceptance_criteria)
+def create_issue_json(tconf, values, repo_host):
+    n_fields = len(tconf)
+    d = dict()
 
-    if repo_host == 'gitlab':
-        return {"title": title, "description": body}
+    if n_fields != len(values):
+        u.error('Error: markdown table header and contents columns do not match!')
+        raise
 
-    return {"title": title, "body": body}
+    for idx in range(n_fields):
+        if tconf[idx] == 'title':
+            d.update({'title': values[idx][idx]})
+        elif tconf[idx] == 'description' and repo_host == 'github':
+            d.update({'body': values[idx]})
+        elif tconf[idx] == 'body' and repo_host == 'gitlab':
+            d.update({'description': values[idx]})
+        else:
+            d.update({tconf[idx]: values[idx]})
+    return d
 
 
 def create_github_url(repo_name, owner):
@@ -41,10 +52,11 @@ def make_api_call(json_issue, url, host, debug):
     u.debug(json_issue, debug)
 
     my_token = get_token(host)
+
     if not host == 'github':
-        a = requests.post(
+        response = requests.post(
             url,
-            data=js.dumps(json_issue),
+            dresponseta=js.dumps(json_issue),
             headers={
                 'PRIVATE-TOKEN': my_token,
                 'Content-Type': 'application/json'
@@ -52,7 +64,7 @@ def make_api_call(json_issue, url, host, debug):
         )
     else:
         auth = 'Bearer %s' % my_token
-        a = requests.post(
+        response = requests.post(
             url,
             data=js.dumps(json_issue),
             headers={
@@ -61,7 +73,7 @@ def make_api_call(json_issue, url, host, debug):
                 'Content-Type': 'application/json'
             }
         )
-    return a, json_issue
+    return response, json_issue
 
 
 @click.command()
@@ -113,14 +125,13 @@ def main(filename, repo_host, prefix, subid, numerate, debug):
         lines = get_all_lines(file)
         rows = []
 
-        for line in lines:
-            rows.append(md_table_row_to_array(line))
-
-        for idx, row in enumerate(rows):
-            row[0] = add_prefix_to_title(
-                row[0], idx+1, prefix, subid, numerate)
-            row[1] = format_description(row[1])
-            row[2] = add_md_checkbox(row[2])
+        for idx, line in enumerate(lines):
+            if idx == 0:
+                col_count, columns = get_table_spec(line)
+            elif idx == 1:
+                pass
+            else:
+                rows.append(md_table_row_to_array(line))
 
         if repo_host == 'github':
             repo = u.get_from_user("Enter repo name: (Ex.: username/repo)")
@@ -132,16 +143,23 @@ def main(filename, repo_host, prefix, subid, numerate, debug):
 
         u.debug(repr(url), debug)
         u.debug(repr(repo_host), debug)
-        responses = []
+
+        for idx, row in enumerate(rows):
+            row[0] = add_prefix_to_title(
+                row[0], idx+1, prefix, subid, numerate)
+
+        rows = make_md_formatting(columns, rows)
+
+        # responses = []
 
         for row in rows:
-            req_resp, req_json = make_api_call(
-                create_issue_json(row[0], row[1], row[2], repo_host),
+            response, issue = make_api_call(
+                create_issue_json(columns, rows, repo_host),
                 url,
                 repo_host,
                 debug
             )
-            u.show_resp_req(req_json, req_resp)
+            u.show_resp_req(issue, response)
 
     finally:
         file.close()

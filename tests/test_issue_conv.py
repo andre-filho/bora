@@ -19,7 +19,6 @@ def test_add_md_checkbox():
 def test_format_description():
     desc = "lorem ipsum dolor sit amet"
     a = ezissue.format_description(desc)
-    print(repr(a))
     if not (a == '**Issue description:**\nlorem ipsum dolor sit amet\n'):
         raise AssertionError()
 
@@ -31,25 +30,19 @@ def test_add_prefix_to_title():
 
     for idx, title in enumerate(titles):
         formattedUS.append(
-            ezissue.add_prefix_to_title(title, idx+1, 'US', '', True)
-        )
+            ezissue.add_prefix_to_title(title, idx+1, 'US', '', True))
         formattedTS.append(
-            ezissue.add_prefix_to_title(title, idx+1, 'TS', '', True)
-        )
+            ezissue.add_prefix_to_title(title, idx+1, 'TS', '', True))
     for idx, title in enumerate(titles):
         formattedUS.append(
-            ezissue.add_prefix_to_title(title, idx+1, 'US', 'M', False)
-        )
+            ezissue.add_prefix_to_title(title, idx+1, 'US', 'M', False))
         formattedTS.append(
-            ezissue.add_prefix_to_title(title, idx+1, 'TS', 'M', False)
-        )
+            ezissue.add_prefix_to_title(title, idx+1, 'TS', 'M', False))
     for idx, title in enumerate(titles):
         formattedUS.append(
-            ezissue.add_prefix_to_title(title, idx+1, '', '', False)
-        )
+            ezissue.add_prefix_to_title(title, idx+1, '', '', False))
         formattedTS.append(
-            ezissue.add_prefix_to_title(title, idx+1, '', '', False)
-        )
+            ezissue.add_prefix_to_title(title, idx+1, '', '', False))
 
     if not (formattedUS[0] == 'US1 Make america great again' and formattedTS[0] == 'TS1 Make america great again'):
         raise AssertionError()
@@ -79,3 +72,23 @@ def test_create_gitlab_url():
     expected = "https://gitlab.com/api/v4/projects/1234/issues"
     if not url == expected:
         raise AssertionError()
+
+
+def test_get_table_spec():
+    l, thead = ezissue.get_table_spec('| asdfds | asdf | asdf |')
+    if not l == 3:
+        raise AssertionError()
+    if not thead == ['asdfds', 'asdf', 'asdf']:
+        raise AssertionError()
+
+# def test_create_issue_json():
+#     a = ezissue.create_issue_json(
+#         ['title', 'description', 'accept'],
+#         [1, 2, 3],
+#         'github'
+#     )
+#     b = ezissue.create_issue_json(
+#         ['title', 'body', 'accept'],
+#         [1, 2, 3],
+#         'gitlab'
+#     )
