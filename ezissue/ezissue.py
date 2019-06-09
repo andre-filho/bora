@@ -16,40 +16,54 @@ GITHUB_BASE_URL = "https://api.github.com"
 GITLAB_BASE_URL = "https://gitlab.com/api/v4"
 
 
-def create_issue_json(tconf, values, repo_host):
-    n_fields = len(tconf)
+def create_issue_json(configuration_row, values_row, repo_host):
+    """
+    Creates a python dict with the issue's values following the format
+    dict({<table header>: <row value>}).
+    """
+    n_fields = len(configuration_row)
     d = dict()
 
-    if n_fields != len(values):
+    if n_fields != len(values_row):
         u.error(
             'Error: markdown table header and contents columns do not match!')
         raise
 
     for idx in range(n_fields):
-        if tconf[idx] == 'title':
-            d.update({'title': values[idx][idx]})
-        elif tconf[idx] == 'description' and repo_host == 'github':
-            d.update({'body': values[idx]})
-        elif tconf[idx] == 'body' and repo_host == 'gitlab':
-            d.update({'description': values[idx]})
+        if configuration_row[idx] == 'title':
+            d.update({'title': values_row[idx][idx]})
+        elif configuration_row[idx] == 'description' and repo_host == 'github':
+            d.update({'body': values_row[idx]})
+        elif configuration_row[idx] == 'body' and repo_host == 'gitlab':
+            d.update({'description': values_row[idx]})
         else:
-            d.update({tconf[idx]: values[idx]})
+            d.update({configuration_row[idx]: values_row[idx]})
     return d
 
 
 def create_github_url(repo_name, owner):
+    """
+    Creates the github's issue endpoint URL for accessing the API.
+    """
     github = "/repos/%s/%s/issues" % (owner.lower(), repo_name.lower())
     endpoint = GITHUB_BASE_URL + github
     return endpoint
 
 
-def create_gitlab_url(repo_id):
-    gitlab = "/projects/%i/issues" % repo_id
+def create_gitlab_url(repo_uid):
+    """
+    Creates the gitlab's issue endpoint URL for accessing the API.
+    """
+    gitlab = "/projects/%i/issues" % repo_uid
     endpoint = GITLAB_BASE_URL + gitlab
     return endpoint
 
 
 def make_api_call(json_issue, url, host, debug):
+    """
+    Makes the API POST request for the issue creation.
+    Returns the response object and the issue's dict.
+    """
     u.debug(json_issue, debug)
 
     my_token = get_token(host)
@@ -118,6 +132,9 @@ def make_api_call(json_issue, url, host, debug):
     help='Enables debug mode'
 )
 def main(filename, repo_host, prefix, subid, numerate, debug):
+    """
+    Main function.
+    """
     if not os.path.isfile(folder_path + 'key.key'):
         config()
 
@@ -165,12 +182,19 @@ def main(filename, repo_host, prefix, subid, numerate, debug):
 
 
 def config():
+    """
+    Runs setup configuration on the CLI. Creates a hidden folder on the user's
+    HOMEDIR with secure encrypted info.
+    """
     u.notify("Config file not found! Initializing configuration...")
+
     ghtk = getpass.getpass(prompt="Please insert your github token: ")
     gltk = getpass.getpass(prompt="Please insert your gitlab token: ")
+
     create_secure_key()
-    a = write_tokens(ghtk, gltk)
-    if a:
+
+    success = write_tokens(ghtk, gltk)
+    if success:
         u.prompt("Created config files successfully!")
         u.prompt("(They're encrypted, don't worry)")
     else:

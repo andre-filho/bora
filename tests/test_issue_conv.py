@@ -81,14 +81,15 @@ def test_get_table_spec():
     if not thead == ['asdfds', 'asdf', 'asdf']:
         raise AssertionError()
 
-# def test_create_issue_json():
-#     a = ezissue.create_issue_json(
-#         ['title', 'description', 'accept'],
-#         [1, 2, 3],
-#         'github'
-#     )
-#     b = ezissue.create_issue_json(
-#         ['title', 'body', 'accept'],
-#         [1, 2, 3],
-#         'gitlab'
-#     )
+
+def test_create_issue_json():
+    a = ezissue.create_issue_json(
+        ['title', 'description', 'accept'],
+        [[1], 2, 3],
+        'github'
+    )
+    b = ezissue.create_issue_json(
+        ['title', 'body', 'accept'],
+        [[1], 2, 3],
+        'gitlab'
+    )
