@@ -28,3 +28,7 @@ deploy:
     script: bash deploy.sh deploy
     on:
       branch: master
+  - provider: script
+    script: bash deploy.sh test
+    on:
+      branch: development
