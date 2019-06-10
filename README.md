@@ -19,8 +19,12 @@
     <img src="https://api.codacy.com/project/badge/Coverage/595af9a088cf44e19ec2679a8c2617f6"/>
   </a> -->
 </p>
+## Table of contents
+
+[TOC]
 
 ## What does it do?
+
 The **ezissue cli** is an application with command line interface which it's main objective is to help you
 in the issue creation process in your projects.
 
@@ -33,6 +37,8 @@ If you find that the issue creation process is painfull and it breaks your *full
 But if you want to spend hours creating issues on Github or Gitlab and find it fun (I sincerely doubt it), who am I to tell you what to do!
 
 ## Usage and configuration
+
+### CLI interface
 
 This program has a CLI that you can take advantage of. Running `ezissue --help`
 will show you the usage and options for the CLI.
@@ -49,10 +55,33 @@ $ ezissue --help
     --help                 Show this message and exit.
 ```
 
+### Markdown file and configuration
+
+The EZIssue program takes a `.md` file as argument. That file must have a markdown table for it to parse to issues. That table is a common md table and can have the following headers: (Note that headers with `*` are mandatory)
+
+| **Header name**     | Description                                                  |          Github support           |                        Gitlab support                        |
+| ------------------- | :----------------------------------------------------------- | :-------------------------------: | :----------------------------------------------------------: |
+| Title*              | Issue’s title                                                |                 Y                 |                              Y                               |
+| Description         | Issue’s body or description                                  |                 Y                 |                              Y                               |
+| Tasks               | Will be a list of checkboxes. Items must be separated with commas. |     Y (goes with description)     |                  Y (goes with description)                   |
+| Acceptance criteria | Will be a list of checkboxes. Items must be separated with commas. |     Y (goes with description)     |                  Y (goes with description)                   |
+| Assignee            | User that is assigned to the issue                           |      Y (assignee’s username)      |                       N (see next row)                       |
+| Assignees           | List of users assigned to the issue                          | Y (array of assignee’s usernames) |                  Y (is a array of user ids)                  |
+| Labels              | List of labels that are to be applied to the issue           |       Y (array of strings)        |            Y (single string, separated by commas)            |
+| Confidential        | Toggles the confidentiality of the issue                     |                 N                 |                      Y (boolean value)                       |
+| Milestone           | Adds a milestone to the issue                                |      Y (number of milestone)      |                       Y (milestone id)                       |
+| Due                 | Sets a due date for stressing out your team                  |                 N                 |          Y (datetime string in format `YYYY-MM-DD`)          |
+| Discussion          | Links the issue to a discussion thread                       |                 N                 | Y (id of the discussion that it solves. Fills the description automatically) |
+| Weight              | Sets the issue’s weight. Best used in XP                     |                 N                 | Y (integer with the issue’s weight, must be bigger than zero) |
+
+**Examples:**
+
 The issue output format is the following:
 
 ```markdown
  <!-- issue-table.md -->
+ | title | description | acceptance criteria |
+ | ----- | ----------- | ------------------- |
  | issue title | brief description | condition a;condition b;condition c |
 ```
 
@@ -63,6 +92,7 @@ The issue output format is the following:
   **Issue description:**
   brief description
 
+  **Acceptance criteria:**
   - [ ] condition a
   - [ ] condition b
   - [ ] condition c
