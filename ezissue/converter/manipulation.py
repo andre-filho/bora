@@ -106,13 +106,11 @@ def make_md_formatting(configuration_header, content):
         "tasks": add_md_checkbox,
     }
 
-    print(configuration_header)
-    print(content)
-
-    for idx in range(len(configuration_header)):
-        if len(configuration_header) == 0 or idx == 0:
-            pass
-        else:
-            content[idx] = func_dict[configuration_header[idx]](
-                str(content[idx][idx]))
+    for row in range(len(content)):
+        for idx in range(len(configuration_header)):
+            if len(configuration_header) == 0 or idx == 0:
+                pass
+            else:
+                content[row][idx] = func_dict[configuration_header[idx]](
+                    str(content[row][idx]))
     return content
