@@ -15,11 +15,11 @@ def md_table_row_to_array(line):
     Recieves a table line and parses it's content as a array of strings, with
     each element representing a column.
     """
-    # this will need to be fixed at some moment
-    line = re.sub(r'(\ \|\ )', '-', line)
+    # replaces the | characters between the text with a totally random string
+    line = re.sub(r'(\ \|\ )', '3Vb7adZJNY', line)
     line = re.sub(r'(\|\ )|(\ \|)', '', line)
     line = line.replace("\n", '')
-    line = line.split('-')
+    line = line.split('3Vb7adZJNY')
     return line
 
 
@@ -105,6 +105,9 @@ def make_md_formatting(configuration_header, content):
         "acceptance criteria": format_acc_criteria,
         "tasks": add_md_checkbox,
     }
+
+    print(configuration_header)
+    print(content)
 
     for idx in range(len(configuration_header)):
         if len(configuration_header) == 0 or idx == 0:
