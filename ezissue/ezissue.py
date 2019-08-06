@@ -33,7 +33,7 @@ def create_issue_json(configuration_row, values_row, repo_host):
 
     for idx in range(n_fields):
         if configuration_row[idx] == 'title':
-            d.update({'title': values_row[idx][idx]})
+            d.update({'title': values_row[idx]})
         elif configuration_row[idx] == 'description' and repo_host == 'github':
             d.update({'body': values_row[idx]})
         elif configuration_row[idx] == 'body' and repo_host == 'gitlab':
