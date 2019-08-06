@@ -24,6 +24,8 @@ def create_issue_json(configuration_row, values_row, repo_host):
     n_fields = len(configuration_row)
     d = dict()
 
+    blacklist = ["acceptance criteria", "tasks"]
+
     if n_fields != len(values_row):
         u.error(
             'Error: markdown table header and contents columns do not match!')
@@ -36,6 +38,15 @@ def create_issue_json(configuration_row, values_row, repo_host):
             d.update({'body': values_row[idx]})
         elif configuration_row[idx] == 'body' and repo_host == 'gitlab':
             d.update({'description': values_row[idx]})
+        elif configuration_row[idx] in blacklist:
+            if repo_host == 'gitlab':
+                body = d['description']
+                body = body + str(values_row[idx])
+                d.update({'description': body})
+            else:
+                body = d['body']
+                body = body + str(values_row[idx])
+                d.update({'body': body})
         else:
             d.update({configuration_row[idx]: values_row[idx]})
     return d
@@ -170,7 +181,7 @@ def main(filename, repo_host, prefix, subid, numerate, debug):
 
         for row in rows:
             response, issue = make_api_call(
-                create_issue_json(columns, rows, repo_host),
+                create_issue_json(columns, row, repo_host),
                 url,
                 repo_host,
                 debug
