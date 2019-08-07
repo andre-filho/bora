@@ -75,3 +75,7 @@ If you already have one of our `pip` releases installed in your machine and want
 ```bash
 $ pip3 install --upgrade ezissue
 ```
+
+## Want to make a contribuition? Here are some quick stuff you can work on!
+
+I want to thank you beforehand for your contribuition. Here you can find some [quick fixes](https://codebeat.co/projects/github-com-andre-filho-ezissue-development/quick_wins) that you can look into. :)
