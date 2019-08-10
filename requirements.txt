@@ -4,7 +4,7 @@ cffi~=1.12.3
 chardet~=3.0.4
 Click~=7.0
 cryptography~=2.6.1
-python-dotenv~=0.10.2
+python-dotenv==0.10.3
 idna~=2.8
 pycparser~=2.19
 requests~=2.21.0
