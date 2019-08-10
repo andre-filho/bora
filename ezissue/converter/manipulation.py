@@ -38,7 +38,7 @@ def format_description(string):
     """
     Adds the header and a final new line to the issue description string.
     """
-    return str('**Issue description:**\n' + string + '\n')
+    return str('**Issue description:**\n---\n\n' + string + '\n'*2)
 
 
 def add_prefix_to_title(title, number, prefix, subid, numerate):
@@ -48,8 +48,10 @@ def add_prefix_to_title(title, number, prefix, subid, numerate):
     subid = subid.upper()
     prefix = prefix.upper()
     title = title.capitalize()
+
     if numerate:
         return str(prefix + subid + str(number) + " " + title)
+
     return str(prefix + subid + " " + title)
 
 
@@ -59,9 +61,11 @@ def get_all_lines(file):
     """
     line = file.readline()
     lines = []
+
     while line:
         lines.append(line)
         line = file.readline()
+
     return lines
 
 
@@ -71,8 +75,6 @@ def get_table_spec(line):
     """
     thead = md_table_row_to_array(line)
     return len(thead), thead
-    # (\|:*-*:*) regex to ignore the split line
-    # (\ *\|\ *:*-*:*\ *)
 
 
 def format_acc_criteria(string):
@@ -81,9 +83,9 @@ def format_acc_criteria(string):
     new line.
     """
     checkboxes = add_md_checkbox(string)
-    acc_criteria = "**Acceptance criteria:**\n"
+    acc_criteria_title = "**Acceptance criteria:**\n---\n\n"
 
-    return "%s%s" % (acc_criteria, checkboxes)
+    return "%s%s" % (acc_criteria_title, checkboxes)
 
 
 def format_tasks(string):
@@ -91,8 +93,8 @@ def format_tasks(string):
     Formats the string adding the tasks header and adds a final new line.
     """
     checkboxes = add_md_checkbox(string)
-    tasks = "**Tasks:**\n"
-    return "%s%s" % (tasks, checkboxes)
+    tasks_title = "**Tasks:**\n---\n\n"
+    return "%s%s\n" % (tasks_title, checkboxes)
 
 
 def make_md_formatting(configuration_header, content):
@@ -106,11 +108,15 @@ def make_md_formatting(configuration_header, content):
         "tasks": add_md_checkbox,
     }
 
-    for row in range(len(content)):
-        for idx in range(len(configuration_header)):
+    cont_length = len(content)
+    conf_header_length = len(configuration_header)
+
+    for row in range(cont_length):
+        for idx in range(conf_header_length):
             if len(configuration_header) == 0 or idx == 0:
                 pass
             else:
-                content[row][idx] = func_dict[configuration_header[idx]](
-                    str(content[row][idx]))
+                content[row][idx] = \
+                    func_dict[configuration_header[idx].lower()](
+                        str(content[row][idx]))
     return content

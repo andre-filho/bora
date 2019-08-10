@@ -85,14 +85,18 @@ The issue output format is the following:
  | issue title | brief description | condition a;condition b;condition c |
 ```
 
+
+
 ```markdown
   <!--title-->
   <PREFIX><SUBID><NUMBER> issue title
   <!--body-->
   **Issue description:**
+  ---
   brief description
 
   **Acceptance criteria:**
+  ---
   - [ ] condition a
   - [ ] condition b
   - [ ] condition c

@@ -32,12 +32,17 @@ def create_issue_json(configuration_row, values_row, repo_host):
         raise
 
     for idx in range(n_fields):
+        configuration_row[idx] = configuration_row[idx].lower()
+
         if configuration_row[idx] == 'title':
             d.update({'title': values_row[idx]})
+
         elif configuration_row[idx] == 'description' and repo_host == 'github':
             d.update({'body': values_row[idx]})
+
         elif configuration_row[idx] == 'body' and repo_host == 'gitlab':
             d.update({'description': values_row[idx]})
+
         elif configuration_row[idx] in blacklist:
             if repo_host == 'gitlab':
                 body = d['description']
