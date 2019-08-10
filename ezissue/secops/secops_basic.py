@@ -9,6 +9,9 @@ lab_path = folder_path + 'lab'
 
 
 def create_secure_key():
+    """
+    Creates a file with the user's secure key for encription purposes.
+    """
     check_folder_structure(folder_path)
     path = folder_path + 'key.key'
 
@@ -23,29 +26,46 @@ def create_secure_key():
 
 
 def get_key():
+    """
+    Gets the user's encription key from filesystem.
+    """
     file = open(folder_path + 'key.key', 'rb')
     k = file.readline()
     return k
 
 
 def check_folder_structure(full_path):
+    """
+    Creates the HOMEDIR folders if they do not exists. If they exists, it does
+    nothing.
+    """
     if not os.path.exists(full_path):
         os.makedirs(full_path)
 
 
 def encrypt(line):
+    """
+    Recieves a line and encrypts it.
+    """
     k = get_key()
     f = Fernet(k)
     return f.encrypt(line)
 
 
 def decrypt_token(encrypted_line):
+    """
+    Recieves a encrypted line and decrypts it.
+    """
     k = get_key()
     f = Fernet(k)
     return f.decrypt(encrypted_line)
 
 
 def write_tokens(github_key, gitlab_key):
+    """
+    Writes user's github and gitlab access keys as encrypted content on a file.
+    Returns if the operation was 'bueno' or 'no bueno'.
+    """
     fp = hub_path
     fp2 = lab_path
 
@@ -67,6 +87,10 @@ def write_tokens(github_key, gitlab_key):
 
 
 def get_token(repo_manager):
+    """
+    Gets the user's access token from the filesystem given the repo manager
+    he's trying to access.
+    """
     enc = ''
     token = ''
     file = ''

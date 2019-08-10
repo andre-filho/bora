@@ -16,33 +16,76 @@ GITHUB_BASE_URL = "https://api.github.com"
 GITLAB_BASE_URL = "https://gitlab.com/api/v4"
 
 
-def create_issue_json(title, description, acceptance_criteria, repo_host):
-    body = "%s\n%s" % (description, acceptance_criteria)
+def create_issue_json(configuration_row, values_row, repo_host):
+    """
+    Creates a python dict with the issue's values following the format
+    dict({<table header>: <row value>}).
+    """
+    n_fields = len(configuration_row)
+    d = dict()
 
-    if repo_host == 'gitlab':
-        return {"title": title, "description": body}
+    blacklist = ["acceptance criteria", "tasks"]
 
-    return {"title": title, "body": body}
+    if n_fields != len(values_row):
+        u.error(
+            'Error: markdown table header and contents columns do not match!')
+        raise
+
+    for idx in range(n_fields):
+        configuration_row[idx] = configuration_row[idx].lower()
+
+        if configuration_row[idx] == 'title':
+            d.update({'title': values_row[idx]})
+
+        elif configuration_row[idx] == 'description' and repo_host == 'github':
+            d.update({'body': values_row[idx]})
+
+        elif configuration_row[idx] == 'body' and repo_host == 'gitlab':
+            d.update({'description': values_row[idx]})
+
+        elif configuration_row[idx] in blacklist:
+            if repo_host == 'gitlab':
+                body = d['description']
+                body = body + str(values_row[idx])
+                d.update({'description': body})
+            else:
+                body = d['body']
+                body = body + str(values_row[idx])
+                d.update({'body': body})
+        else:
+            d.update({configuration_row[idx]: values_row[idx]})
+    return d
 
 
 def create_github_url(repo_name, owner):
+    """
+    Creates the github's issue endpoint URL for accessing the API.
+    """
     github = "/repos/%s/%s/issues" % (owner.lower(), repo_name.lower())
     endpoint = GITHUB_BASE_URL + github
     return endpoint
 
 
-def create_gitlab_url(repo_id):
-    gitlab = "/projects/%i/issues" % repo_id
+def create_gitlab_url(repo_uid):
+    """
+    Creates the gitlab's issue endpoint URL for accessing the API.
+    """
+    gitlab = "/projects/%i/issues" % repo_uid
     endpoint = GITLAB_BASE_URL + gitlab
     return endpoint
 
 
 def make_api_call(json_issue, url, host, debug):
+    """
+    Makes the API POST request for the issue creation.
+    Returns the response object and the issue's dict.
+    """
     u.debug(json_issue, debug)
 
     my_token = get_token(host)
+
     if not host == 'github':
-        a = requests.post(
+        response = requests.post(
             url,
             data=js.dumps(json_issue),
             headers={
@@ -52,7 +95,7 @@ def make_api_call(json_issue, url, host, debug):
         )
     else:
         auth = 'Bearer %s' % my_token
-        a = requests.post(
+        response = requests.post(
             url,
             data=js.dumps(json_issue),
             headers={
@@ -61,7 +104,7 @@ def make_api_call(json_issue, url, host, debug):
                 'Content-Type': 'application/json'
             }
         )
-    return a, json_issue
+    return response, json_issue
 
 
 @click.command()
@@ -105,6 +148,9 @@ def make_api_call(json_issue, url, host, debug):
     help='Enables debug mode'
 )
 def main(filename, repo_host, prefix, subid, numerate, debug):
+    """
+    Main function.
+    """
     if not os.path.isfile(folder_path + 'key.key'):
         config()
 
@@ -113,14 +159,13 @@ def main(filename, repo_host, prefix, subid, numerate, debug):
         lines = get_all_lines(file)
         rows = []
 
-        for line in lines:
-            rows.append(md_table_row_to_array(line))
-
-        for idx, row in enumerate(rows):
-            row[0] = add_prefix_to_title(
-                row[0], idx+1, prefix, subid, numerate)
-            row[1] = format_description(row[1])
-            row[2] = add_md_checkbox(row[2])
+        for idx, line in enumerate(lines):
+            if idx == 0:
+                col_count, columns = get_table_spec(line)
+            elif idx == 1:
+                pass
+            else:
+                rows.append(md_table_row_to_array(line))
 
         if repo_host == 'github':
             repo = u.get_from_user("Enter repo name: (Ex.: username/repo)")
@@ -132,28 +177,40 @@ def main(filename, repo_host, prefix, subid, numerate, debug):
 
         u.debug(repr(url), debug)
         u.debug(repr(repo_host), debug)
-        responses = []
+
+        for idx, row in enumerate(rows):
+            row[0] = add_prefix_to_title(
+                row[0], idx+1, prefix, subid, numerate)
+
+        rows = make_md_formatting(columns, rows)
 
         for row in rows:
-            req_resp, req_json = make_api_call(
-                create_issue_json(row[0], row[1], row[2], repo_host),
+            response, issue = make_api_call(
+                create_issue_json(columns, row, repo_host),
                 url,
                 repo_host,
                 debug
             )
-            u.show_resp_req(req_json, req_resp)
+            u.show_resp_req(issue, response)
 
     finally:
         file.close()
 
 
 def config():
+    """
+    Runs setup configuration on the CLI. Creates a hidden folder on the user's
+    HOMEDIR with secure encrypted info.
+    """
     u.notify("Config file not found! Initializing configuration...")
+
     ghtk = getpass.getpass(prompt="Please insert your github token: ")
     gltk = getpass.getpass(prompt="Please insert your gitlab token: ")
+
     create_secure_key()
-    a = write_tokens(ghtk, gltk)
-    if a:
+
+    success = write_tokens(ghtk, gltk)
+    if success:
         u.prompt("Created config files successfully!")
         u.prompt("(They're encrypted, don't worry)")
     else:

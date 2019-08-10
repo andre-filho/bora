@@ -1,3 +1,4 @@
-| das auto | sdjaiofjiadj | oiasiojasojd;sdjofdjsaoj;asdijfodasjjsf |
-| das auto | sdjaiofjiadj | oiasiojasojd;sdjofdjsaoj;asdijfodasjjsf |
-| das auto | sdjaiofjiadj | oiasiojasojd;sdjofdjsaoj;asdijfodasjjsf |
+| Title | Description | Acceptance Criteria |
+| ----- | ----- | ---- |
+| Implement basic charts | Make the implementation of the basic charts for the front-end dashboards. Each one of the charts have specific rules and must consume already filtered data from the back-end due to performance. | consume endpoints with filtered data; create reusable components on quasar; make tension triphasic chart; make tirphasic current chart; make active power chart; make reactive power chart; make power factor chart; make dht power chart |
+| Implement basic charts | Make the implementation of the basic charts for the front-end dashboards. Each one of the charts have specific rules and must consume already filtered data from the back-end due to performance. | consume endpoints with filtered data; create reusable components on quasar; make tension triphasic chart; make tirphasic current chart; make active power chart; make reactive power chart; make power factor chart; make dht power chart |
