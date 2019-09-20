@@ -7,7 +7,7 @@ install:
 - pip install -r dev-requirements.txt
 
 script:
-- pytest tests/ -v
+# - pytest tests/ -v
 - pycodestyle ezissue/*
 
 after_script:
@@ -26,9 +26,9 @@ before_deploy:
 deploy:
   - provider: script
     script: bash deploy.sh deploy
-    on:
-      branch: master
-  - provider: script
-    script: bash deploy.sh test
-    on:
-      branch: development
+  #   on:
+  #     branch: master
+  # - provider: script
+  #   script: bash deploy.sh test
+  #   on:
+  #     branch: development

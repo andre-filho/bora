@@ -33,7 +33,7 @@ CLASSIFIERS = [
 ]
 
 setup(  # pragma: no cover
-    name='ezissue',
+    name='ezissue-br',
     description="The ultimate aid in the issue creation process.",  # nopep8
     url='https://github.com/andre-filho/ezissue',
     long_description=codecs.open('README.md', 'rb', 'utf8').read(),
@@ -42,10 +42,10 @@ setup(  # pragma: no cover
     author_email='andre.filho001@outlook.com',
     version=codecs.open('VERSION.txt', 'rb', 'utf8').read(),
     packages=find_packages(),
-    keywords=['ezissue', 'issue', 'markdown', 'api', 'github', 'gitlab', 'markdown converter'],
+    keywords=['ezissue-br', 'issue', 'markdown', 'api', 'github', 'gitlab', 'markdown to issue converter', 'pt-br'],
     entry_points={
         'console_scripts': [
-            'ezissue = ezissue.ezissue:main'
+            'brissue = ezissue.ezissue:main'
         ]
     },
     install_requires=REQUIREMENTS,

@@ -38,7 +38,7 @@ def format_description(string):
     """
     Adds the header and a final new line to the issue description string.
     """
-    return str('**Issue description:**\n---\n\n' + string + '\n'*2)
+    return str('**Descrição:**\n---\n\n' + string + '\n'*2)
 
 
 def add_prefix_to_title(title, number, prefix, subid, numerate):
@@ -83,7 +83,7 @@ def format_acc_criteria(string):
     new line.
     """
     checkboxes = add_md_checkbox(string)
-    acc_criteria_title = "**Acceptance criteria:**\n---\n\n"
+    acc_criteria_title = "**Critérios de aceitação:**\n---\n\n"
 
     return "%s%s" % (acc_criteria_title, checkboxes)
 
@@ -93,7 +93,7 @@ def format_tasks(string):
     Formats the string adding the tasks header and adds a final new line.
     """
     checkboxes = add_md_checkbox(string)
-    tasks_title = "**Tasks:**\n---\n\n"
+    tasks_title = "**Tarefas:**\n---\n\n"
     return "%s%s\n" % (tasks_title, checkboxes)
 
 
