@@ -26,8 +26,8 @@ before_deploy:
 deploy:
   - provider: script
     script: bash deploy.sh deploy
-  #   on:
-  #     branch: master
+    on:
+      branch: pt-br-desenho
   # - provider: script
   #   script: bash deploy.sh test
   #   on:
