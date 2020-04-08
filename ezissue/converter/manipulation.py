@@ -116,6 +116,8 @@ def make_md_formatting(configuration_header, content):
             if len(configuration_header) == 0 or idx == 0:
                 pass
             else:
+                print(func_dict[configuration_header[idx].lower()](
+                    str(content[row][idx])))
                 content[row][idx] = \
                     func_dict[configuration_header[idx].lower()](
                         str(content[row][idx]))

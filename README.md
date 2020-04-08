@@ -62,7 +62,6 @@ The EZIssue program takes a `.md` file as argument. That file must have a markdo
 | Description         | Issue’s body or description                                  |                 Y                 |                              Y                               |
 | Tasks               | Will be a list of checkboxes. Items must be separated with commas. |     Y (goes with description)     |                  Y (goes with description)                   |
 | Acceptance criteria | Will be a list of checkboxes. Items must be separated with commas. |     Y (goes with description)     |                  Y (goes with description)                   |
-<!--
 | Assignee** | User that is assigned to the issue    |   Y (assignee’s username)   |  N (see next row)  |
 | Assignees** | List of users assigned to the issue   | Y (array of assignee’s usernames) |    Y (is a array of user ids)    |
 | Labels**  | List of labels that are to be applied to the issue |    Y (array of strings)    | Y (  string, separated by commas) |
@@ -71,7 +70,7 @@ The EZIssue program takes a `.md` file as argument. That file must have a markdo
 | Due**         | Sets a due date for stressing out your team         |         N         |     Y (datetime string in format `YYYY-MM-DD`)     |
 | Discussion**     | Links the issue to a discussion thread            |         N         | Y (id of the discussion that it solves. Fills the description automatically) |
 | Weight**       | Sets the issue’s weight. Best used in XP           |         N         | Y (integer with the issue’s weight, must be bigger than zero) |
--->
+
 
 **Examples:**
 
@@ -111,4 +110,4 @@ $ pip3 install --upgrade ezissue
 
 ## Want to make a contribuition? Here are some quick stuff you can work on!
 
-I want to thank you beforehand for your contribuition. Here you can find some [quick fixes](https://codebeat.co/projects/github-com-andre-filho-ezissue-development/quick_wins) that you can look into. :)
+I want to thank you beforehand for your contribuition. Here you can find some [quick fixes](https://codebeat.co/projects/github-com-andre-filho-ezissue-development/quick_wins) that you can look into. And be free to ask for new features, solve or add issues in our issue board. :)
