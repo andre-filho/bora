@@ -16,8 +16,8 @@ def md_table_row_to_array(line):
     each element representing a column.
     """
     # replaces the | characters between the text with a totally random string
-    line = re.sub(r'(\ \|\ )', '3Vb7adZJNY', line)
-    line = re.sub(r'(\|\ )|(\ \|)', '', line)
+    line = re.sub(r'(\ \|\ )|(\b\|\b)', '3Vb7adZJNY', line)
+    line = re.sub(r'((\|\ )|(\ \|))|((\|\b)|(\b\|))', '', line)
     line = line.replace("\n", '')
     line = line.split('3Vb7adZJNY')
     return line
