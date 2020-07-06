@@ -5,7 +5,13 @@ def test_md_table_row_to_array():
     md = '| get to the choppa | asdf | jkl |'
     array = ezissue.md_table_row_to_array(md)
 
+    md2 = '|get to the choppa|asdf|jkl|'
+    array2 = ezissue.md_table_row_to_array(md2)
+
     if not array == ['get to the choppa', 'asdf', 'jkl']:
+        raise AssertionError()
+    
+    if not array2 == ['get to the choppa', 'asdf', 'jkl']:
         raise AssertionError()
 
 
