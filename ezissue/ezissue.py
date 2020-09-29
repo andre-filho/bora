@@ -24,7 +24,7 @@ def create_issue_json(configuration_row, values_row, repo_host):
     n_fields = len(configuration_row)
     d = dict()
 
-    blacklist = ["acceptance criteria", "tasks"]
+    blacklist = ["acceptance criteria", "extras", "tasks"]
 
     if n_fields != len(values_row):
         u.error(
@@ -181,6 +181,9 @@ def main(filename, repo_host, prefix, subid, numerate, debug):
         for idx, row in enumerate(rows):
             row[0] = add_prefix_to_title(
                 row[0], idx+1, prefix, subid, numerate)
+
+        columns = [x.strip() for x in columns]
+        rows = [[x.strip().strip(';') for x in y] for y in rows]
 
         rows = make_md_formatting(columns, rows)
 

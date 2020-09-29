@@ -38,7 +38,7 @@ def format_description(string):
     """
     Adds the header and a final new line to the issue description string.
     """
-    return str('**Issue description:**\n---\n\n' + string + '\n'*2)
+    return str('**Descrição:**\n---\n\n' + string + '\n'*2)
 
 
 def add_prefix_to_title(title, number, prefix, subid, numerate):
@@ -47,12 +47,12 @@ def add_prefix_to_title(title, number, prefix, subid, numerate):
     """
     subid = subid.upper()
     prefix = prefix.upper()
-    title = title.capitalize()
+    title = ' '.join([t.capitalize() for t in title.split(' ')])
 
     if numerate:
-        return str(prefix + subid + str(number) + " " + title)
+        return str(prefix + subid + str(number) + title)
 
-    return str(prefix + subid + " " + title)
+    return str(prefix + subid + title)
 
 
 def get_all_lines(file):
@@ -82,11 +82,20 @@ def format_acc_criteria(string):
     Formats the string adding the acceptance criteria header and adds a final
     new line.
     """
-    checkboxes = add_md_checkbox(string)
-    acc_criteria_title = "**Acceptance criteria:**\n---\n\n"
+    checkboxes = add_md_checkbox(string) if string != 'Não há critérios.\n' else string
+    acc_criteria_title = "**Critérios de Aceitação:**\n---\n\n"
 
-    return "%s%s" % (acc_criteria_title, checkboxes)
+    return "%s%s\n\n" % (acc_criteria_title, checkboxes)
 
+def format_extras(string):
+    """
+    Formats the string adding the acceptance criteria header and adds a final
+    new line.
+    """
+    checkboxes = add_md_checkbox(string) if string != 'Não há critérios.\n' else string
+    acc_criteria_title = "**Critérios Extras:**\n---\n\n"
+
+    return "%s%s\n\n" % (acc_criteria_title, checkboxes)
 
 def format_tasks(string):
     """
@@ -105,6 +114,7 @@ def make_md_formatting(configuration_header, content):
         "description": format_description,
         "body": format_description,
         "acceptance criteria": format_acc_criteria,
+        "extras": format_extras,
         "tasks": add_md_checkbox,
     }
 
@@ -116,6 +126,8 @@ def make_md_formatting(configuration_header, content):
             if len(configuration_header) == 0 or idx == 0:
                 pass
             else:
+                if (configuration_header[idx].lower() == 'acceptance criteria' or configuration_header[idx].lower() == 'extras') and content[row][idx] == '':
+                    content[row][idx] = 'Não há critérios.\n'
                 print(func_dict[configuration_header[idx].lower()](
                     str(content[row][idx])))
                 content[row][idx] = \
