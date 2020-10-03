@@ -1,15 +1,5 @@
 import re
 
-
-def remove_md_titles(line):
-    line = re.sub(
-        r'((#\s)|(##\s)|(###\s)|(####\s)|(#####\s)|(######\s))',
-        '',
-        line
-    )
-    return line
-
-
 def md_table_row_to_array(line):
     """
     Recieves a table line and parses it's content as a array of strings, with
@@ -27,10 +17,11 @@ def add_md_checkbox(itemized_string):
     """
     Converts a itemized string in a formatted markdown checkbox list.
     """
-    items = itemized_string.split(';')
+    items = re.split(r';\s?', itemized_string)
     a = ""
+
     for item in items:
-        a += str('- [ ] ' + item + '\n')
+        a += str('- [ ] ' + item.capitalize() + '\n')
     return a
 
 
@@ -74,6 +65,11 @@ def get_table_spec(line):
     Gets the table header and returns both it's length and it's formatted self.
     """
     thead = md_table_row_to_array(line)
+
+    for (index, item) in enumerate(thead):
+        thead[index] = item.lower()
+
+
     return len(thead), thead
 
 
