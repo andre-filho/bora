@@ -3,7 +3,6 @@ import click
 import getpass
 import requests
 import json as js
-
 import ezissue.utils as u
 from ezissue.converter.manipulation import *
 from ezissue.secops.secops_basic import get_token
@@ -16,7 +15,7 @@ GITHUB_BASE_URL = "https://api.github.com"
 GITLAB_BASE_URL = "https://gitlab.com/api/v4"
 
 
-def create_issue_json(configuration_row, values_row, repo_host):
+def create_issue_json(configuration_row, values_row, repo_host, blk):
     """
     Creates a python dict with the issue's values following the format
     dict({<table header>: <row value>}).
@@ -24,7 +23,7 @@ def create_issue_json(configuration_row, values_row, repo_host):
     n_fields = len(configuration_row)
     d = dict()
 
-    blacklist = ["acceptance criteria", "tasks"]
+    blacklist = ["acceptance criteria", "extras", "tasks"]
 
     if n_fields != len(values_row):
         u.error(
@@ -54,6 +53,12 @@ def create_issue_json(configuration_row, values_row, repo_host):
                 d.update({'body': body})
         else:
             d.update({configuration_row[idx]: values_row[idx]})
+
+    for i in blk:
+        d[i] = eval(d[i])
+
+    print(d)
+
     return d
 
 
@@ -182,11 +187,15 @@ def main(filename, repo_host, prefix, subid, numerate, debug):
             row[0] = add_prefix_to_title(
                 row[0], idx+1, prefix, subid, numerate)
 
-        rows = make_md_formatting(columns, rows)
+        columns = [x.strip() for x in columns]
+        rows = [[x.strip().strip(';') for x in y] for y in rows]
+
+        blacklist = ['labels', 'assignees']
+        rows = make_md_formatting([x for x in columns if x not in blacklist], rows)
 
         for row in rows:
             response, issue = make_api_call(
-                create_issue_json(columns, row, repo_host),
+                create_issue_json(columns, row, repo_host, blacklist),
                 url,
                 repo_host,
                 debug
