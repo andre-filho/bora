@@ -1,5 +1,6 @@
 import re
 
+
 def md_table_row_to_array(line):
     """
     Recieves a table line and parses it's content as a array of strings, with
@@ -68,7 +69,6 @@ def get_table_spec(line):
 
     for (index, item) in enumerate(thead):
         thead[index] = item.lower()
-
 
     return len(thead), thead
 
